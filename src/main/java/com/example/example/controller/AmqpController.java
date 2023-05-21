@@ -17,7 +17,7 @@ public class AmqpController {
     private final WebHookService webHookService;
 
     @RabbitListener(queues = "webhook", concurrency = "2")
-    public void processComment(final List<List<WebHookPayload>> webHookPayloads) {
+    public void processComment(final List<WebHookPayload> webHookPayloads) {
         log.info("Accepted webhook {}", webHookPayloads.size());
         this.webHookService.accept(webHookPayloads);
         log.info("Webhook submitted");

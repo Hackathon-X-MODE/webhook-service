@@ -16,12 +16,10 @@ public class WebHookService {
     private final ProxyClient proxyClient;
 
 
-    public void accept(List<List<WebHookPayload>> webhooks) {
-        webhooks.forEach(payloads -> {
-            payloads.forEach(payload -> {
-                log.info("send to {}", payload.getUrl());
-                this.proxyClient.proxy(payload.getUrl(), payload);
-            });
+    public void accept(List<WebHookPayload> payloads) {
+        payloads.forEach(payload -> {
+            log.info("send to {}", payload.getUrl());
+            this.proxyClient.proxy(payload.getUrl(), payload);
         });
     }
 }
