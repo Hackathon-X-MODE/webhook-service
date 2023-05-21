@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-service
+spec:
+  selector:
+    app: webhook-service-application
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-service-application
+  labels:
+    app: webhook-service-application
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webhook-service-application
+  template:
+    metadata:
+      labels:
+        app: webhook-service-application
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+        - name: webhook-service
+          image: ghcr.io/hackathon-x-mode/webhook-service:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+{{/*          env:*/}}
+{{/*            - name: DATABASE_PASSWORD*/}}
+{{/*              valueFrom:*/}}
+{{/*                secretKeyRef:*/}}
+{{/*                  name: postgres-postgresql*/}}
+{{/*                  key: postgres-password*/}}
+          envFrom:
+            - configMapRef:
+                name: common-service-envs
+      imagePullSecrets:
+        - name: regcred
